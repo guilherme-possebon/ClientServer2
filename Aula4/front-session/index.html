@@ -1,0 +1,24 @@
+<html>
+  <head>
+    <title>Testando biscoitinhos</title>
+  </head>
+  <body>
+    Views: <span id="contagem">&nbsp;</span>
+
+    <script>
+      async function execute() {
+        let response = await fetch("http://localhost:3000/", {
+          credentials: "include",
+        });
+
+        let json = await response.json();
+
+        console.log(json);
+
+        document.getElementById("contagem").innerHTML = json.views;
+      }
+
+      execute();
+    </script>
+  </body>
+</html>
