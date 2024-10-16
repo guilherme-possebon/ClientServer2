@@ -1,6 +1,6 @@
 create table "pedido" (
     "id" serial,
-    "situação" int NOT NULL,
+    "situacao" int NOT NULL,
     "nome" varchar(200) NOT NULL,
     "cidade" varchar(100) NOT NULL,
     "siglaUf" varchar(2) NOT NULL,
