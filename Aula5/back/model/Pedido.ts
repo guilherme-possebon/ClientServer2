@@ -149,7 +149,12 @@ export class Pedido {
   }
 
   public async listAll(): Promise<Pedido[]> {
-    let sql = `SELECT * FROM pedido ORDER BY id`;
+    let sql = `SELECT
+        *,
+        (SELECT COUNT(*) FROM "pedidoItem" WHERE "pedidoItem"."idPedido" = "pedido".Id) AS "qtItem",
+        (SELECT COALESCE(SUM("pedidoItem"."valorTotal"),0) FROM "pedidoItem" WHERE "pedidoItem"."idPedido" = "pedido".Id) AS "valorTotal"
+        FROM "pedido"
+        ORDER BY id`;
     let pedidos: Pedido[] = [];
 
     try {

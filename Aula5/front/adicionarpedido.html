@@ -7,18 +7,21 @@
     <title>Adicionar Pedido</title>
   </head>
   <body>
+    <a href="pedidos.html">Voltar</a>
     <div class="inputContainer">
-      <h2>Adicionar Pedido</h2>
+      <h1 id="h1">Adicionar Pedido</h1>
       <form id="inputForm" onsubmit="saveOrders()" method="dialog">
         <div class="formGroup" id="inputs">
           <div class="labelContainer">
             <label for="situacao">Situação</label>
-            <input
-              type="number"
-              id="situacao"
-              name="situacao"
-              placeholder="Inserir situação"
-            />
+            <select id="situacao">
+              <option value="0">Cancelado</option>
+              <option value="10">Emitido</option>
+              <option value="20">Pago</option>
+              <option value="30">Enviado</option>
+              <option value="40">Entregue</option>
+              <option value="50">Concluído</option>
+            </select>
           </div>
 
           <div class="labelContainer">
@@ -89,8 +92,11 @@
   </body>
   <script src="utils.js"></script>
   <script src="peidos.js"></script>
-  <script src="adicionarPedido.js"></script>
   <script>
-    loadStates();
+    async function start() {
+      await loadStates();
+      loadOrder();
+    }
+    start();
   </script>
 </html>

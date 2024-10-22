@@ -1,3 +1,9 @@
+.tableContainer {
+  display: flex;
+  justify-content: center;
+  margin: 24px 0;
+}
+
 .styled-table {
   width: 100%;
   border-collapse: collapse;

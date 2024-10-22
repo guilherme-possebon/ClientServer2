@@ -28,7 +28,6 @@ async function loadStates() {
 
 async function loadCities() {
   let siglaUF = document.getElementById("siglaUf").value.toUpperCase();
-  console.log(siglaUF, "aa");
 
   if (siglaUF !== "") {
     try {
@@ -60,4 +59,54 @@ async function loadCities() {
       alert("Erro ao carregar cidades: " + error.message);
     }
   }
+}
+
+function setSelectValue(id, inVal) {
+  let dl = document.getElementById(id);
+  let el = 0;
+
+  for (let i = 0; i < dl.options.length; i++) {
+    if (dl.options[i].value == inVal) {
+      el = i;
+      break;
+    }
+  }
+  dl.selectedIndex = el;
+}
+
+function getParam(parametro) {
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  return urlParams.get(parametro);
+}
+
+async function myGet(url, method) {
+  const options = {
+    method: method,
+    redirect: "follow",
+  };
+
+  let result = await fetch(apiUrl + url, options);
+  return result;
+}
+
+async function myPost(url, method, jacson) {
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  const options = {
+    method: method,
+    body: JSON.stringify(jacson),
+    headers: myHeaders,
+    redirect: "follow",
+  };
+
+  let result = await fetch(apiUrl + url, options);
+  return result;
+}
+
+function RealFormat(valor) {
+  valor = valor?.replace(",", "");
+  valor = valor?.replace(".", ",");
+  return "<small>R$ </small>" + valor;
 }

@@ -8,33 +8,27 @@
   </head>
   <body>
     <a href="adicionarpedido.html">Adicionar Pedido</a>
-    <table class="styled-table">
-      <thead>
-        <tr>
-          <th>Id</th>
-          <th>Situação</th>
-          <th>Nome</th>
-          <th>Cidade</th>
-          <th>Forma de pagamento</th>
-          <th>Prazo de pagamento</th>
-          <th>Tipo de frete</th>
-          <th>Observações</th>
-          <th>Sigla UF</th>
-        </tr>
-      </thead>
-      <tbody id="tbody">
-        <tr>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="tableContainer">
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>Ações</th>
+            <th>Id</th>
+            <th>Situação</th>
+            <th>Nome</th>
+            <th>Cidade</th>
+            <th>Sigla UF</th>
+            <th>Forma de pagamento</th>
+            <th>Prazo de pagamento</th>
+            <th>Tipo de frete</th>
+            <th>Observações</th>
+            <th>Qt Itens</th>
+            <th>Valor total</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
   </body>
   <script src="utils.js"></script>
   <script src="peidos.js"></script>
