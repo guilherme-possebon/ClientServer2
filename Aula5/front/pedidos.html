@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="pedidos.css" />
+    <title>Pedidos</title>
+  </head>
+  <body>
+    <a href="adicionarpedido.html">Adicionar Pedido</a>
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>Situação</th>
+          <th>Nome</th>
+          <th>Cidade</th>
+          <th>Forma de pagamento</th>
+          <th>Prazo de pagamento</th>
+          <th>Tipo de frete</th>
+          <th>Observações</th>
+          <th>Sigla UF</th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+  <script src="utils.js"></script>
+  <script src="peidos.js"></script>
+  <script>
+    ListAllOrders();
+  </script>
+</html>

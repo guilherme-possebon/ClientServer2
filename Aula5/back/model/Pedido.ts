@@ -14,37 +14,24 @@ export class Pedido {
   validate(): string[] {
     let errors: string[] = [];
 
-    // Validate 'nome'
     if (this.nome.trim().length === 0) {
       errors.push("Nome é obrigatório.");
     }
-
-    // Validate 'cidade' and 'siglaUf'
     if (this.cidade.trim().length === 0 || this.siglaUf.trim().length === 0) {
       errors.push("É necessário definir cidade e sigla.");
     }
-
-    // Validate 'siglaUf' length (assuming it should be 2 characters)
     if (this.siglaUf.trim().length !== 2) {
       errors.push("Sigla deve conter 2 caracteres.");
     }
-
-    // Validate 'formaPagamento'
     if (this.formaPagamento.trim().length === 0) {
       errors.push("Forma de pagamento é obrigatória.");
     }
-
-    // Validate 'prazoPagamento'
     if (this.prazoPagamento.trim().length === 0) {
       errors.push("Prazo de pagamento é obrigatório.");
     }
-
-    // Validate 'tipoFrete'
     if (this.tipoFrete.trim().length === 0) {
       errors.push("Tipo de frete é obrigatório.");
     }
-
-    // Optional: Validate 'observacoes' length (if there is a max length limit, e.g., 500 characters)
     if (this.observacoes.length > 500) {
       errors.push("Observações não podem exceder 500 caracteres.");
     }
@@ -77,13 +64,15 @@ export class Pedido {
       this.observacoes,
     ];
 
-    let resultado = await dbQuery(sql, params);
-
-    if (resultado.length > 0) {
-      this.id = resultado[0].id;
-      return this;
+    try {
+      let resultado = await dbQuery(sql, params);
+      if (resultado.length > 0) {
+        this.id = resultado[0].id;
+        return this;
+      }
+    } catch (error) {
+      console.error("Error inserting Pedido:", error);
     }
-
     return null;
   }
 
@@ -104,63 +93,75 @@ export class Pedido {
       this.id,
     ];
 
-    let resultado = await dbQuery(sql, params);
-
-    if (resultado) {
-      return this;
+    try {
+      let resultado = await dbQuery(sql, params);
+      if (resultado) {
+        return this;
+      }
+    } catch (error) {
+      console.error("Error updating Pedido:", error);
     }
-
     return null;
   }
 
   public async save(): Promise<Pedido | null> {
-    if (this.id) {
-      return await this.update();
+    try {
+      if (this.id) {
+        return await this.update();
+      } else {
+        return await this.insert();
+      }
+    } catch (error) {
+      console.error("Error saving Pedido:", error);
     }
-
-    return await this.insert();
+    return null;
   }
 
   public async delete(): Promise<boolean | null> {
-    let sql = `DELETE FROM
-        pedido WHERE id = $1
-        RETURNING id;`;
+    let sql = `DELETE FROM pedido WHERE id = $1 RETURNING id;`;
 
-    let resultado = await dbQuery(sql, [this.id]);
-
-    if (resultado.length > 0) {
-      this.id = resultado[0].id;
-      return true;
+    try {
+      let resultado = await dbQuery(sql, [this.id]);
+      if (resultado.length > 0) {
+        this.id = resultado[0].id;
+        return true;
+      }
+    } catch (error) {
+      console.error("Error deleting Pedido:", error);
     }
-
     return false;
   }
 
   public async findOneById(id: number): Promise<Pedido | null> {
-    let sql = `SELECT * FROM pedido
-        WHERE id = $1 LIMIT 1;`;
+    let sql = `SELECT * FROM pedido WHERE id = $1 LIMIT 1;`;
 
-    let resultado = await dbQuery(sql, [id]);
-
-    if (resultado.length > 0) {
-      let pedido = new Pedido();
-      Object.assign(pedido, resultado[0]);
-      return pedido;
+    try {
+      let resultado = await dbQuery(sql, [id]);
+      if (resultado.length > 0) {
+        let pedido = new Pedido();
+        Object.assign(pedido, resultado[0]);
+        return pedido;
+      }
+    } catch (error) {
+      console.error("Error finding Pedido by id:", error);
     }
-
     return null;
   }
 
   public async listAll(): Promise<Pedido[]> {
     let sql = `SELECT * FROM pedido ORDER BY id`;
-    let result = await dbQuery(sql);
     let pedidos: Pedido[] = [];
 
-    for (let i = 0; i < result.length; i++) {
-      let json = result[i];
-      let pedido = new Pedido();
-      Object.assign(pedido, json);
-      pedidos.push(pedido);
+    try {
+      let result = await dbQuery(sql);
+      for (let i = 0; i < result.length; i++) {
+        let json = result[i];
+        let pedido = new Pedido();
+        Object.assign(pedido, json);
+        pedidos.push(pedido);
+      }
+    } catch (error) {
+      console.error("Error listing all Pedidos:", error);
     }
 
     return pedidos;
