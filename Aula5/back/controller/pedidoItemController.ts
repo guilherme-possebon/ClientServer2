@@ -12,6 +12,19 @@ export const getAllProductItem = async (req: Request, res: Response) => {
   }
 };
 
+export const getOneProductItem = async (req: Request, res: Response) => {
+  let id = Number(req.params.idPedido);
+  try {
+    console.log(id);
+    let pedidoItem = new PedidoItem();
+    let result = await pedidoItem.oneById(id);
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Error fetching all product items:", error);
+    res.status(500).json({ erro: "Erro ao buscar itens do pedido." });
+  }
+};
+
 export const getOneByIdProductItem = async (req: Request, res: Response) => {
   try {
     let id = Number(req.params.id);

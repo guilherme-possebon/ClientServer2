@@ -59,7 +59,7 @@ async function ListAllOrders() {
         `;
     }
 
-    document.getElementById("tbody").innerHTML = html;
+    document.getElementById("tbodyPedidos").innerHTML = html;
   } catch (error) {
     console.error("Erro ao listar pedidos:", error);
     alert("Erro ao listar pedidos: " + error.message);

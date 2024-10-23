@@ -68,21 +68,12 @@ export class PedidoItem {
   public async update(): Promise<PedidoItem | null> {
     let sql = `UPDATE "pedidoItem"
     SET
-        "idPedido" = $1,
-        "produto" = $2,
-        "quantidade" = $3,
-        "valorUnitario" = $4,
-        "valorTotal" = $5
-    WHERE id = $6`;
+        "produto" = $1,
+        "quantidade" = $2,
+        "valorUnitario" = $3,
+    WHERE id = $4`;
 
-    let params = [
-      this.idPedido,
-      this.produto,
-      this.quantidade,
-      this.valorUnitario,
-      this.valorTotal,
-      this.id,
-    ];
+    let params = [this.produto, this.quantidade, this.valorUnitario, this.id];
 
     try {
       let resultado = await dbQuery(sql, params);
@@ -145,6 +136,27 @@ export class PedidoItem {
 
     try {
       let result = await dbQuery(sql);
+      for (let i = 0; i < result.length; i++) {
+        let json = result[i];
+        let pedidoItem = new PedidoItem();
+        Object.assign(pedidoItem, json);
+        pedidoItens.push(pedidoItem);
+      }
+    } catch (error) {
+      console.error("Error listing all PedidoItens:", error);
+    }
+
+    return pedidoItens;
+  }
+
+  public async oneById(id: number): Promise<PedidoItem[]> {
+    let sql = `SELECT * FROM "pedidoItem" where "idPedido" = $1 ORDER BY id`;
+    let pedidoItens: PedidoItem[] = [];
+
+    console.log(id);
+
+    try {
+      let result = await dbQuery(sql, [id]);
       for (let i = 0; i < result.length; i++) {
         let json = result[i];
         let pedidoItem = new PedidoItem();
