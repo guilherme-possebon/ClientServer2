@@ -1,0 +1,33 @@
+<html>
+    <title>Download CSV</title>
+    <body>
+        <h1>Download csv</h1>
+        <a href="http://localhost:3333/csv">Download de CSV</a>
+        <button onclick="downloadCsv()">Download de CSV</button>
+    </body>
+    <script>
+
+async function downloadCsv()
+{
+    let result = await fetch('http://localhost:3333/csv');
+    let csv = await result.text();
+    console.log(csv);
+    download('output.csv', csv);
+}
+
+function download(filename, text)
+{
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/csv;charset=utf-8,' 
+    + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+  
+    element.style.display = 'none';
+    document.body.appendChild(element);
+  
+    element.click();
+  
+    document.body.removeChild(element);
+}
+    </script>
+</html>
