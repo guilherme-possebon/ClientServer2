@@ -1,18 +1,20 @@
 async function listItems() {
   let id = getParam("id");
 
-  let result = await myGet("/pedidoitem/pedido/" + id, "GET");
-  let json = await result.json();
+  if (id) {
+    try {
+      let result = await myGet("/pedidoitem/pedido/" + id, "GET");
+      let json = await result.json();
 
-  let html = "";
+      let html = "";
 
-  for (let index = 0; index < json.length; index++) {
-    const item = json[index];
+      for (let index = 0; index < json.length; index++) {
+        const item = json[index];
 
-    let excluir = `<button onclick="deleteItem(${item.id})">Excluir</button>`;
-    let editar = `<button onclick="loadEditedItem(${item.id})">Editar</button>`;
+        let excluir = `<button onclick="deleteItem(${item.id})">Excluir</button>`;
+        let editar = `<button onclick="loadEditedItem(${item.id})">Editar</button>`;
 
-    html += `
+        html += `
         <tr>
             <td>${excluir} ${editar}</td>
             <td>${item.id}</td>
@@ -23,17 +25,29 @@ async function listItems() {
         </tr>
     `;
 
-    document.getElementById("tbodyItem").innerHTML = html;
+        document.getElementById("tbodyItem").innerHTML = html;
+      }
+    } catch (error) {
+      alert("Error no servidor: " + error.message);
+    }
   }
 }
 
 async function saveItem() {
-  let id = getParam("id");
-  let method = id == null ? "POST" : "PUT";
-  let url = id == null ? "/pedidoitem" : "/pedidoitem/" + id;
+  let idPedido = getParam("id");
+  let idItem = Number(document.getElementById("itemIdSpan").innerText);
+  idItem = idItem == 0 ? null : idItem;
+  let method = idItem == null ? "POST" : "PUT";
+  let url = idItem == null ? "/pedidoitem" : "/pedidoitem/" + idItem;
+
+  console.log(idPedido);
+  console.log(idItem);
+  console.log(method);
+  console.log(url);
 
   let item = {
-    nomeProduto: document.getElementById("nomeProduto").value,
+    idPedido: idPedido,
+    produto: document.getElementById("nomeProduto").value,
     quantidade: document.getElementById("quantidade").value,
     valorUnitario: document.getElementById("valorUnitario").value,
   };
@@ -62,12 +76,10 @@ async function loadEditedItem(id) {
     let result = await myGet("/pedidoitem/" + id);
     let item = await result.json();
 
-    console.log(item.produto);
-    console.log(item.quantidade);
-    console.log(item.valorUnitario);
-
     document.getElementById("nomeProduto").value = item.produto;
     document.getElementById("quantidade").value = item.quantidade;
     document.getElementById("valorUnitario").value = item.valorUnitario;
+    document.getElementById("h1Item").innerHTML = "Editando item do id: ";
+    document.getElementById("itemIdSpan").innerHTML = id;
   }
 }

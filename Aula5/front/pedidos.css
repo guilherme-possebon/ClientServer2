@@ -1,3 +1,23 @@
+body {
+  font-family: Arial, sans-serif;
+}
+
+.logoutButton {
+  background-color: rgb(232, 52, 52);
+  color: white;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+}
+.logoutButton:hover {
+  background-color: rgb(247, 97, 97);
+}
+
 .tableContainer {
   display: flex;
   justify-content: center;
@@ -59,11 +79,12 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.inputContainer h2 {
+.inputContainer h1 {
   text-align: center;
   color: #333;
   margin-bottom: 20px;
-  font-family: Arial, sans-serif;
+  font-size: 2rem;
+  font-weight: bold;
 }
 
 .formGroup {
@@ -117,4 +138,27 @@ select {
 
 .saveBtn:hover {
   background-color: #0056b3;
+}
+
+.headerContainer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.headerContainer span {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.btnPrimary {
+  background-color: #007bff;
+  padding: 8px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+  transition: background-color 0.3s;
+}
+.btnPrimary:hover {
+  background-color: #2a8ef9;
 }

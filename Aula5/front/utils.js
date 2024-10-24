@@ -1,5 +1,61 @@
 const apiUrl = "http://localhost:3000";
 
+let authorization = localStorage.getItem("Authorization");
+
+async function verificaLogin() {
+  let resultado = await buscarLogin(authorization);
+  console.log(resultado);
+
+  if (!resultado) {
+    window.location = "login.html";
+  }
+}
+
+async function buscarLogin(authorization) {
+  const myHeaders = new Headers();
+  console.log(authorization);
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("Authorization", authorization);
+
+  const options = {
+    method: "GET",
+    headers: myHeaders,
+  };
+
+  let result = await fetch(apiUrl + "/login", options);
+  let json = await result.json();
+  console.log(json);
+
+  if (result.ok) {
+    return true;
+  }
+
+  return false;
+}
+
+function logout() {
+  localStorage.removeItem("Authorization");
+
+  window.location = "login.html";
+}
+
+async function login() {
+  let user = document.getElementById("username").value;
+  let password = document.getElementById("password").value;
+
+  let authorization = btoa(user + ":" + password);
+  let result = await buscarLogin(authorization);
+  console.log(result);
+
+  if (result) {
+    localStorage.setItem("Authorization", authorization);
+    alert("Login ok");
+    window.location = "pedidos.html";
+  } else {
+    alert("Falha no login!");
+  }
+}
+
 async function loadStates() {
   try {
     let resultStates = await fetch("https://brasilapi.com.br/api/ibge/uf/v1");
@@ -81,8 +137,13 @@ function getParam(parametro) {
 }
 
 async function myGet(url, method) {
+  const myHeaders = new Headers();
+  myHeaders.append("Authorization", authorization);
+
+  console.log(authorization);
   const options = {
     method: method,
+    headers: myHeaders,
     redirect: "follow",
   };
 
@@ -93,6 +154,7 @@ async function myGet(url, method) {
 async function myPost(url, method, jacson) {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("Authorization", authorization);
 
   const options = {
     method: method,
@@ -109,4 +171,62 @@ function RealFormat(valor) {
   valor = valor?.replace(",", "");
   valor = valor?.replace(".", ",");
   return "<small>R$ </small>" + valor;
+}
+
+async function imprimirPedido() {
+  try {
+    let id = getParam("id");
+    let result = await myGet("/pedido/pdf/" + id);
+
+    if (!result.ok) {
+      throw new Error("Failed to fetch PDF: " + result.statusText);
+    }
+
+    let blob = await result.blob();
+    let url = window.URL.createObjectURL(blob);
+
+    let link = document.createElement("a");
+    link.href = url;
+    link.download = "pedido.pdf";
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Error sending pdf:", error);
+    alert("Failed to download PDF: " + error.message); // User-friendly error message
+  }
+}
+
+async function enviarEmailPedido() {
+  try {
+    let id = getParam("id");
+    let result = await myGet("/pedido/email/" + id);
+    let json = await result.json();
+    console.log(json);
+  } catch (error) {
+    console.error("Error sending email:", error);
+  }
+}
+
+async function exportarCsvPedido() {
+  try {
+    let result = await myGet("/pedido/csv");
+    let dados = await result.text();
+
+    let blob = new Blob([dados], { type: "text/csv" });
+    let url = window.URL.createObjectURL(blob);
+
+    let link = document.createElement("a");
+    link.href = url;
+    link.download = "pedidos.csv";
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Error exporting CSV:", error);
+  }
 }

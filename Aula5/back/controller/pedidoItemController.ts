@@ -52,8 +52,8 @@ export const insertProductItem = async (req: Request, res: Response) => {
     pedidoItem.produto = req.body.produto;
     pedidoItem.quantidade = req.body.quantidade;
     pedidoItem.valorUnitario = req.body.valorUnitario;
-    pedidoItem.valorTotal = req.body.valorTotal;
 
+    console.log(pedidoItem);
     let erros: string[] = pedidoItem.validate();
 
     if (erros.length > 0) {

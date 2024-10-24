@@ -1,4 +1,4 @@
-import { Pedido } from "../model/Pedido";
+import { Pedido } from "../model/pedido";
 
 async function testPedidoInsert() {
   let pedido = new Pedido();

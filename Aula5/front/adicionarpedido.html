@@ -85,7 +85,10 @@
       </div>
       <div class="itemContainer limit">
         <div class="inputContainer">
-          <h1 id="h1">Adicionar item</h1>
+          <div class="headerContainer">
+            <h1 id="h1Item">Adicionar item</h1>
+            <span id="itemIdSpan"></span>
+          </div>
           <form id="inputForm" onsubmit="saveItem()" method="dialog">
             <div class="formGroup" id="inputs">
               <div class="labelContainer">
@@ -134,11 +137,20 @@
         </table>
       </div>
     </main>
+    <div>
+      <button onclick="imprimirPedido()" class="btnPrimary">
+        Imprimir pedido
+      </button>
+      <button onclick="enviarEmailPedido()" class="btnPrimary">
+        Enviar email pedido
+      </button>
+    </div>
   </body>
   <script src="utils.js"></script>
-  <script src="peidos.js"></script>
+  <script src="pedidos.js"></script>
   <script src="item.js"></script>
   <script>
+    verificaLogin();
     async function start() {
       await loadStates();
       loadOrder();

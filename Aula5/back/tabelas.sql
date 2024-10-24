@@ -21,3 +21,10 @@ create TABLE "pedidoItem" (
     PRIMARY KEY(id),
     FOREIGN KEY("idPedido") REFERENCES pedido(id)
 );
+
+create table usuario (
+    id serial,
+    username varchar(255) NOT NULL,
+    password varchar(255) NOT NULL,
+    primary key(id)
+)

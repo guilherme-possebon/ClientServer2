@@ -11,7 +11,7 @@ export class PedidoItem {
   validate(): string[] {
     let errors: string[] = [];
 
-    if (this.produto.trim().length === 0) {
+    if (this.produto?.length === 0) {
       errors.push("Produto é obrigatório.");
     }
 
@@ -21,10 +21,6 @@ export class PedidoItem {
 
     if (this.valorUnitario <= 0) {
       errors.push("Valor unitário deve ser maior que zero.");
-    }
-
-    if (this.valorTotal <= 0) {
-      errors.push("Valor total deve ser maior que zero.");
     }
 
     if (this.idPedido <= 0) {
@@ -40,17 +36,15 @@ export class PedidoItem {
       "idPedido",
       "produto",
       "quantidade",
-      "valorUnitario",
-      "valorTotal"
+      "valorUnitario"
     )
-    VALUES ($1, $2, $3, $4, $5) RETURNING id`;
+    VALUES ($1, $2, $3, $4) RETURNING id`;
 
     let params = [
       this.idPedido,
       this.produto,
       this.quantidade,
       this.valorUnitario,
-      this.valorTotal,
     ];
 
     try {
@@ -70,7 +64,7 @@ export class PedidoItem {
     SET
         "produto" = $1,
         "quantidade" = $2,
-        "valorUnitario" = $3,
+        "valorUnitario" = $3
     WHERE id = $4`;
 
     let params = [this.produto, this.quantidade, this.valorUnitario, this.id];

@@ -8,6 +8,7 @@
   </head>
   <body>
     <a href="adicionarpedido.html">Adicionar Pedido</a>
+    <button class="logoutButton" onclick="logout()">Sair</button>
     <div class="tableContainer">
       <table class="styled-table">
         <thead>
@@ -29,10 +30,20 @@
         <tbody id="tbodyPedidos"></tbody>
       </table>
     </div>
+    <div>
+      <button
+        onclick="exportarCsvPedido()"
+        style="margin-top: 15px"
+        class="btnPrimary"
+      >
+        Exportar CSV
+      </button>
+    </div>
   </body>
   <script src="utils.js"></script>
-  <script src="peidos.js"></script>
+  <script src="pedidos.js"></script>
   <script>
+    verificaLogin();
     ListAllOrders();
   </script>
 </html>
