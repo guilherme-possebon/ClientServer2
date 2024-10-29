@@ -13,9 +13,9 @@ async function testPedidoInsert() {
   await pedido.save();
 
   if (!pedido.id) {
-    console.log("Falha INSERT");
+    console.error("Falha INSERT");
   } else {
-    console.log("INSERT feito com sucesso!");
+    console.error("INSERT feito com sucesso!");
   }
 }
 
@@ -34,9 +34,9 @@ async function testPedidoUpdate() {
   await pedido.save();
 
   if (pedido == null) {
-    console.log("Falha no UPDATE");
+    console.error("Falha no UPDATE");
   } else {
-    console.log("UPDATE feito com sucesso!");
+    console.error("UPDATE feito com sucesso!");
   }
 }
 
@@ -48,21 +48,19 @@ async function testPedidoDelete() {
   let result = await pedido.delete();
 
   if (!result) {
-    console.log("Falha no DELETE");
+    console.error("Falha no DELETE");
   } else {
-    console.log("DELETE feito com sucesso!");
+    console.error("DELETE feito com sucesso!");
   }
 }
 
 async function testPedidoSelectOne() {
-  let pedido = new Pedido();
-
-  let result = await pedido.findOneById(1);
+  let result = await Pedido.findOneById(1);
 
   if (result == null) {
-    console.log("Id não encontrado");
+    console.error("Id não encontrado");
   } else {
-    console.log("FindOneById feito com sucesso!");
+    console.error("FindOneById feito com sucesso!");
   }
 }
 

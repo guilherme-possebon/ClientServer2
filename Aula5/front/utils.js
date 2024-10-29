@@ -4,7 +4,6 @@ let authorization = localStorage.getItem("Authorization");
 
 async function verificaLogin() {
   let resultado = await buscarLogin(authorization);
-  console.log(resultado);
 
   if (!resultado) {
     window.location = "login.html";
@@ -13,7 +12,6 @@ async function verificaLogin() {
 
 async function buscarLogin(authorization) {
   const myHeaders = new Headers();
-  console.log(authorization);
   myHeaders.append("Content-Type", "application/json");
   myHeaders.append("Authorization", authorization);
 
@@ -24,7 +22,6 @@ async function buscarLogin(authorization) {
 
   let result = await fetch(apiUrl + "/login", options);
   let json = await result.json();
-  console.log(json);
 
   if (result.ok) {
     return true;
@@ -45,7 +42,6 @@ async function login() {
 
   let authorization = btoa(user + ":" + password);
   let result = await buscarLogin(authorization);
-  console.log(result);
 
   if (result) {
     localStorage.setItem("Authorization", authorization);
@@ -140,7 +136,6 @@ async function myGet(url, method) {
   const myHeaders = new Headers();
   myHeaders.append("Authorization", authorization);
 
-  console.log(authorization);
   const options = {
     method: method,
     headers: myHeaders,
@@ -175,27 +170,27 @@ function RealFormat(valor) {
 
 async function imprimirPedido() {
   try {
-    let id = getParam("id");
-    let result = await myGet("/pedido/pdf/" + id);
+    let idPedido = getParam("id");
+    let result = await myGet("/pedido/pdf/" + idPedido);
 
     if (!result.ok) {
-      throw new Error("Failed to fetch PDF: " + result.statusText);
+      throw new Error(`Failed to fetch PDF: ${result.statusText}`);
     }
 
-    let blob = await result.blob();
-    let url = window.URL.createObjectURL(blob);
+    const blob = await result.blob();
 
-    let link = document.createElement("a");
-    link.href = url;
-    link.download = "pedido.pdf";
-    document.body.appendChild(link);
-    link.click();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "pedido.pdf";
+    document.body.appendChild(a);
+    a.click();
 
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
+    a.remove();
+    URL.revokeObjectURL(url);
   } catch (error) {
     console.error("Error sending pdf:", error);
-    alert("Failed to download PDF: " + error.message); // User-friendly error message
+    alert("Failed to download PDF: " + error.message);
   }
 }
 
@@ -204,7 +199,6 @@ async function enviarEmailPedido() {
     let id = getParam("id");
     let result = await myGet("/pedido/email/" + id);
     let json = await result.json();
-    console.log(json);
   } catch (error) {
     console.error("Error sending email:", error);
   }

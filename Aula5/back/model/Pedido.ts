@@ -1,4 +1,7 @@
-import { client, dbQuery } from "./../database";
+import puppeteer from "puppeteer";
+import { dbQuery } from "./../database";
+import * as nodemailer from "nodemailer";
+import { PedidoItem } from "./PedidoItem";
 
 export class Pedido {
   id: number = 0;
@@ -132,7 +135,7 @@ export class Pedido {
     return false;
   }
 
-  public async findOneById(id: number): Promise<Pedido | null> {
+  static async findOneById(id: number): Promise<Pedido | null> {
     let sql = `SELECT * FROM pedido WHERE id = $1 LIMIT 1;`;
 
     try {
@@ -170,5 +173,188 @@ export class Pedido {
     }
 
     return pedidos;
+  }
+
+  public async gerarPdf(html: string) {
+    const browser = await puppeteer.launch({ headless: true });
+    const page = await browser.newPage();
+    await page.setViewport({ width: 1366, height: 768 });
+    await page.setContent(html);
+    const pdfBuffer = await page.pdf();
+    await page.close();
+    await browser.close();
+    return pdfBuffer;
+  }
+
+  public async pdf(idPedido: number) {
+    let html = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Order Details</title>
+      </head>
+      <body style="font-family: Arial, sans-serif; padding: 20px; line-height: 1.6; background-color: #f9f9f9; color: #333;">
+        <div style="max-width: 800px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #fff;">
+          <h1 style="text-align: center; color: #333; font-size: 24px">Order Details</h1>
+          <div style="margin-bottom: 15px"><strong style="display: inline-block; width: 200px">Situação:</strong><span style="display: inline-block">${this.situacao}</span></div>
+          <div style="margin-bottom: 15px"><strong style="display: inline-block; width: 200px">Nome:</strong><span style="display: inline-block">${this.nome}</span></div>
+          <div style="margin-bottom: 15px"><strong style="display: inline-block; width: 200px">Forma de pagamento:</strong><span style="display: inline-block">${this.formaPagamento}</span></div>
+          <div style="margin-bottom: 15px"><strong style="display: inline-block; width: 200px">Prazo de pagamento:</strong><span style="display: inline-block">${this.prazoPagamento}</span></div>
+          <div style="margin-bottom: 15px"><strong style="display: inline-block; width: 200px">Tipo de frete:</strong><span style="display: inline-block">${this.tipoFrete}</span></div>
+          <div style="margin-bottom: 15px"><strong style="display: inline-block; width: 200px">Observações:</strong><span style="display: inline-block">${this.observacoes}</span></div>
+          <div style="margin-bottom: 15px"><strong style="display: inline-block; width: 200px">Sigla UF:</strong><span style="display: inline-block">${this.siglaUf}</span></div>
+          <div style="margin-bottom: 15px"><strong style="display: inline-block; width: 200px">Cidade:</strong><span style="display: inline-block">${this.cidade}</span></div>
+        </div>
+          `;
+    let pedidoItem = await PedidoItem.oneById(idPedido);
+
+    if (pedidoItem.length > 0) {
+      html += `
+      <h1 style="text-align: center; color: #333; font-size: 24px">Items from order</h1>
+       <table style="width: 100%; border-collapse: collapse; font-size: 16px; text-align: left;">
+        <thead>
+          <tr style="background-color: #333; ">
+            <th style="padding: 12px 15px; border: 1px solid #ddd; color: #000; font-weight: bold;">Produto</th>
+            <th style="padding: 12px 15px; border: 1px solid #ddd; color: #000; font-weight: bold;">Quantidade</th>
+            <th style="padding: 12px 15px; border: 1px solid #ddd; color: #000; font-weight: bold;">Valor unitario</th>
+            <th style="padding: 12px 15px; border: 1px solid #ddd; color: #000; font-weight: bold;">Valor total</th>
+          </tr>
+        </thead>
+        <tbody>
+      `;
+      for (let index = 0; index < pedidoItem.length; index++) {
+        const item = pedidoItem[index];
+
+        html += `
+        <tr style="border-bottom: 1px solid #ddd;"  >
+          <td style="padding: 12px 15px; border: 1px solid #ddd;">${item.produto}</td>
+          <td style="padding: 12px 15px; border: 1px solid #ddd;">${item.quantidade}</td>
+          <td style="padding: 12px 15px; border: 1px solid #ddd;">${item.valorUnitario}</td>
+          <td style="padding: 12px 15px; border: 1px solid #ddd;">${item.valorTotal}</td>
+          </tr>
+          `;
+      }
+    }
+    html += `
+      </tbody>
+   </table>
+      </body>
+      </html>`;
+    return await this.gerarPdf(html);
+  }
+
+  public async email() {
+    try {
+      let emailConfig = {
+        host: "smtp.mailersend.net",
+        port: 587,
+        auth: {
+          user: "MS_q2H7LQ@trial-v69oxl5n95dl785k.mlsender.net",
+          pass: "GDHsGziMsC9hEjkx",
+        },
+      };
+
+      await Pedido.findOneById(this.id);
+
+      let html = `
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Order Details</title>
+  </head>
+  <body
+    style="
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      line-height: 1.6;
+      background-color: #f9f9f9;
+      color: #333;
+    "
+  >
+    <div
+      style="
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #fff;
+      "
+    >
+      <h1 style="text-align: center; color: #333; font-size: 24px">
+        Order Details
+      </h1>
+
+      <div style="margin-bottom: 15px">
+        <strong style="display: inline-block; width: 200px">Situação:</strong>
+        <span style="display: inline-block">${this.situacao}</span>
+      </div>
+
+      <div style="margin-bottom: 15px">
+        <strong style="display: inline-block; width: 200px">Nome:</strong>
+        <span style="display: inline-block">${this.nome}</span>
+      </div>
+
+      <div style="margin-bottom: 15px">
+        <strong style="display: inline-block; width: 200px"
+          >Forma de pagamento:</strong
+        >
+        <span style="display: inline-block">${this.formaPagamento}</span>
+      </div>
+
+      <div style="margin-bottom: 15px">
+        <strong style="display: inline-block; width: 200px"
+          >Prazo de pagamento:</strong
+        >
+        <span style="display: inline-block">${this.prazoPagamento}</span>
+      </div>
+
+      <div style="margin-bottom: 15px">
+        <strong style="display: inline-block; width: 200px"
+          >Tipo de frete:</strong
+        >
+        <span style="display: inline-block">${this.tipoFrete}</span>
+      </div>
+
+      <div style="margin-bottom: 15px">
+        <strong style="display: inline-block; width: 200px"
+          >Observações:</strong
+        >
+        <span style="display: inline-block">${this.observacoes}</span>
+      </div>
+
+      <div style="margin-bottom: 15px">
+        <strong style="display: inline-block; width: 200px">Sigla UF:</strong>
+        <span style="display: inline-block">${this.siglaUf}</span>
+      </div>
+
+      <div style="margin-bottom: 15px">
+        <strong style="display: inline-block; width: 200px">Cidade:</strong>
+        <span style="display: inline-block">${this.cidade}</span>
+      </div>
+    </div>
+  </body>
+</html>
+
+    `;
+
+      let mailOptions = {
+        from: "teste@trial-v69oxl5n95dl785k.mlsender.net",
+        to: "guilhermepossebon06@gmail.com",
+        subject: "Estou enviando um email pelo TS",
+        html: html,
+      };
+
+      let transporter = nodemailer.createTransport(emailConfig);
+
+      return await transporter.sendMail(mailOptions);
+    } catch (error) {
+      console.error("Error when sending email:", error);
+      return { erro: "Erro ao mandar email." };
+    }
   }
 }

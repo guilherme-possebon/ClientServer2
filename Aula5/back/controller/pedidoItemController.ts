@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { PedidoItem } from "../model/pedidoItem";
+import { PedidoItem } from "../model/PedidoItem";
 
 export const getAllProductItem = async (req: Request, res: Response) => {
   try {
@@ -15,9 +15,7 @@ export const getAllProductItem = async (req: Request, res: Response) => {
 export const getOneProductItem = async (req: Request, res: Response) => {
   let id = Number(req.params.idPedido);
   try {
-    console.log(id);
-    let pedidoItem = new PedidoItem();
-    let result = await pedidoItem.oneById(id);
+    let result = await PedidoItem.oneById(id);
     res.status(200).json(result);
   } catch (error) {
     console.error("Error fetching all product items:", error);
@@ -28,11 +26,10 @@ export const getOneProductItem = async (req: Request, res: Response) => {
 export const getOneByIdProductItem = async (req: Request, res: Response) => {
   try {
     let id = Number(req.params.id);
-    let pedidoItem = new PedidoItem();
-    let result = await pedidoItem.findOneById(id);
+    let pedidoItem = await PedidoItem.findOneById(id);
 
-    if (result != null) {
-      res.status(200).json(result);
+    if (pedidoItem != null) {
+      res.status(200).json(pedidoItem);
       return;
     }
 
@@ -52,8 +49,8 @@ export const insertProductItem = async (req: Request, res: Response) => {
     pedidoItem.produto = req.body.produto;
     pedidoItem.quantidade = req.body.quantidade;
     pedidoItem.valorUnitario = req.body.valorUnitario;
+    pedidoItem.valorTotal = pedidoItem.quantidade * pedidoItem.valorUnitario;
 
-    console.log(pedidoItem);
     let erros: string[] = pedidoItem.validate();
 
     if (erros.length > 0) {
@@ -78,11 +75,9 @@ export const insertProductItem = async (req: Request, res: Response) => {
 export const updateProductItem = async (req: Request, res: Response) => {
   try {
     let id = Number(req.params.id);
-    let pedidoItem = new PedidoItem();
+    let pedidoItem = await PedidoItem.findOneById(id);
 
-    let result = await pedidoItem.findOneById(id);
-
-    if (result == null) {
+    if (pedidoItem == null) {
       res.status(400).json({ id: id, erro: "Item do pedido não encontrado." });
       return;
     }
@@ -92,7 +87,7 @@ export const updateProductItem = async (req: Request, res: Response) => {
     pedidoItem.produto = req.body.produto;
     pedidoItem.quantidade = req.body.quantidade;
     pedidoItem.valorUnitario = req.body.valorUnitario;
-    pedidoItem.valorTotal = req.body.valorTotal;
+    pedidoItem.valorTotal = pedidoItem.valorUnitario * pedidoItem.quantidade;
 
     let erros: string[] = pedidoItem.validate();
 

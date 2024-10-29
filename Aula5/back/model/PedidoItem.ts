@@ -36,15 +36,17 @@ export class PedidoItem {
       "idPedido",
       "produto",
       "quantidade",
-      "valorUnitario"
+      "valorUnitario",
+      "valorTotal"
     )
-    VALUES ($1, $2, $3, $4) RETURNING id`;
+    VALUES ($1, $2, $3, $4, $5) RETURNING id`;
 
     let params = [
       this.idPedido,
       this.produto,
       this.quantidade,
       this.valorUnitario,
+      this.valorTotal,
     ];
 
     try {
@@ -64,10 +66,17 @@ export class PedidoItem {
     SET
         "produto" = $1,
         "quantidade" = $2,
-        "valorUnitario" = $3
-    WHERE id = $4`;
+        "valorUnitario" = $3,
+        "valorTotal" = $4
+    WHERE id = $5`;
 
-    let params = [this.produto, this.quantidade, this.valorUnitario, this.id];
+    let params = [
+      this.produto,
+      this.quantidade,
+      this.valorUnitario,
+      this.valorTotal,
+      this.id,
+    ];
 
     try {
       let resultado = await dbQuery(sql, params);
@@ -108,7 +117,7 @@ export class PedidoItem {
     return false;
   }
 
-  public async findOneById(id: number): Promise<PedidoItem | null> {
+  static async findOneById(id: number): Promise<PedidoItem | null> {
     let sql = `SELECT * FROM "pedidoItem" WHERE id = $1 LIMIT 1;`;
 
     try {
@@ -143,11 +152,9 @@ export class PedidoItem {
     return pedidoItens;
   }
 
-  public async oneById(id: number): Promise<PedidoItem[]> {
+  static async oneById(id: number): Promise<PedidoItem[]> {
     let sql = `SELECT * FROM "pedidoItem" where "idPedido" = $1 ORDER BY id`;
     let pedidoItens: PedidoItem[] = [];
-
-    console.log(id);
 
     try {
       let result = await dbQuery(sql, [id]);

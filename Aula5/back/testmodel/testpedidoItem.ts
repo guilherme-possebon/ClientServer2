@@ -1,5 +1,5 @@
 import { Pedido } from "../model/pedido";
-import { PedidoItem } from "../model/pedidoItem";
+import { PedidoItem } from "../model/PedidoItem";
 
 async function testPedido() {
   let pedido = new Pedido();

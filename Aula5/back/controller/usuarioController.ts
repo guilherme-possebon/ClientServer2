@@ -10,19 +10,14 @@ export const findUser = async (
     let authorization = req.get("Authorization")?.replace("Basic", "");
     let usuario = new Usuario();
 
-    console.log(authorization);
-
     if (authorization) {
       let decoded = Buffer.from(authorization, "base64").toString("binary");
-      console.log(decoded, 123);
       let userPassword = decoded.split(":");
       usuario.username = userPassword[0];
       usuario.password = userPassword[1];
     }
 
     let result = await usuario.findUser();
-
-    console.log(result);
 
     if (result) {
       next();

@@ -21,7 +21,7 @@ async function listItems() {
             <td>${item.produto}</td>
             <td>${item.quantidade}</td>
             <td>${item.valorUnitario}</td>
-            <td>${item.valorTotal}</td>
+            <td>R$${item.valorTotal}</td>
         </tr>
     `;
 
@@ -39,11 +39,6 @@ async function saveItem() {
   idItem = idItem == 0 ? null : idItem;
   let method = idItem == null ? "POST" : "PUT";
   let url = idItem == null ? "/pedidoitem" : "/pedidoitem/" + idItem;
-
-  console.log(idPedido);
-  console.log(idItem);
-  console.log(method);
-  console.log(url);
 
   let item = {
     idPedido: idPedido,

@@ -11,12 +11,11 @@ export class Usuario {
       let params = [this.username, this.password];
 
       let result: Usuario[] = await dbQuery(sql, params);
-      console.log(result);
       if (result.length > 0) {
         return true;
       }
     } catch (error) {
-      console.log("Error when trying to find user", error);
+      console.error("Error when trying to find user", error);
     }
     return false;
   }
