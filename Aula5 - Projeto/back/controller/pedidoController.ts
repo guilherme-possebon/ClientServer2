@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
-import { Pedido } from "../model/pedido";
-import * as nodemailer from "nodemailer";
+import { Pedido } from "../model/Pedido";
 import * as fs from "fs";
 
 export const getAllProduct = async (req: Request, res: Response) => {
