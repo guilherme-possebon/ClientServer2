@@ -2,6 +2,16 @@ const apiUrl = "http://localhost:3000";
 
 let authorization = localStorage.getItem("Authorization");
 
+async function execute() {
+  let response = await fetch("http://localhost:3000/", {
+    credentials: "include",
+  });
+
+  let json = await response.json();
+
+  console.log(json);
+}
+
 async function verificaLogin() {
   let resultado = await buscarLogin(authorization);
 

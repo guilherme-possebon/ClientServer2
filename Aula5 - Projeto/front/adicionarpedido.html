@@ -150,6 +150,7 @@
   <script src="pedidos.js"></script>
   <script src="item.js"></script>
   <script>
+    execute();
     verificaLogin();
     async function start() {
       await loadStates();
@@ -157,18 +158,5 @@
       listItems();
     }
     start();
-  </script>
-  <script>
-    async function execute() {
-      let response = await fetch("http://localhost:3000/", {
-        credentials: "include",
-      });
-
-      let json = await response.json();
-
-      console.log(json);
-    }
-
-    execute();
   </script>
 </html>
