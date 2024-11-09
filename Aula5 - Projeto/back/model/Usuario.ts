@@ -9,8 +9,11 @@ export class Usuario {
       let sql = `SELECT * FROM usuario WHERE username = $1 AND password = $2`;
 
       let params = [this.username, this.password];
+      console.log(this.password);
 
       let result: Usuario[] = await dbQuery(sql, params);
+
+      console.log(result);
       if (result.length > 0) {
         return true;
       }
