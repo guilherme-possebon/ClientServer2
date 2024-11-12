@@ -2,24 +2,27 @@ import { Request, Response } from "express";
 import { Usuario } from "../models/Usuario";
 
 export class UsuariosController {
-  async list(req: Request, res: Response): Promise<Response> {
+  async list(req: Request, res: Response) {
     let users: Usuario[] = await Usuario.find();
 
-    return res.status(200).json(users);
+    res.status(200).json(users);
+    return;
   }
 
-  async find(req: Request, res: Response): Promise<Response> {
+  async find(req: Request, res: Response) {
     let id = Number(req.params.id);
 
     let usuario: Usuario | null = await Usuario.findOneBy({ id });
     if (!usuario) {
-      return res.status(422).json({ error: "Usuario não encontrado!" });
+      res.status(422).json({ error: "Usuario não encontrado!" });
+      return;
     }
 
-    return res.status(200).json(usuario);
+    res.status(200).json(usuario);
+    return;
   }
 
-  async create(req: Request, res: Response): Promise<Response> {
+  async create(req: Request, res: Response) {
     let body = req.body;
 
     console.log(body);
@@ -30,16 +33,18 @@ export class UsuariosController {
       senha: body.senha,
     }).save();
 
-    return res.status(200).json(usuario);
+    res.status(200).json(usuario);
+    return;
   }
 
-  async update(req: Request, res: Response): Promise<Response> {
+  async update(req: Request, res: Response) {
     let body = req.body;
     let id = Number(req.params.id);
 
     let usuario: Usuario | null = await Usuario.findOneBy({ id });
     if (!usuario) {
-      return res.status(422).json({ error: "Usuario não encontrado!" });
+      res.status(422).json({ error: "Usuario não encontrado!" });
+      return;
     }
 
     usuario.nome = body.nome;
@@ -47,19 +52,22 @@ export class UsuariosController {
     usuario.senha = body.senha;
     await usuario.save();
 
-    return res.status(200).json(usuario);
+    res.status(200).json(usuario);
+    return;
   }
 
-  async delete(req: Request, res: Response): Promise<Response> {
+  async delete(req: Request, res: Response) {
     let id = Number(req.params.id);
 
     let usuario: Usuario | null = await Usuario.findOneBy({ id });
     if (!usuario) {
-      return res.status(422).json({ error: "Usuario não encontrado!" });
+      res.status(422).json({ error: "Usuario não encontrado!" });
+      return;
     }
 
     usuario.remove();
 
-    return res.status(200).json();
+    res.status(200).json();
+    return;
   }
 }
